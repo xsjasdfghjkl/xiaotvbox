@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.SafeTVBox" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:colorBackground">@color/bg</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:textColorPrimary">@color/fg</item>
+        <item name="android:textColorSecondary">@color/fg_dim</item>
+    </style>
+</resources>

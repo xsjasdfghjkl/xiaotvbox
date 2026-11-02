@@ -1,0 +1,18 @@
+// 根构建文件：这里唯一的作用是声明 Android Gradle Plugin 的版本。
+// 没有它的话，app/build.gradle 里的 `id 'com.android.application'` 会因为找不到版本号
+// 而报 "Plugin was not found"，这在本地和 GitHub Actions 上都会失败。
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'com.android.application' version '8.1.4' apply false
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
+}

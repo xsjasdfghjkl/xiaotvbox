@@ -1,0 +1,60 @@
+plugins {
+    // 版本在根 build.gradle 里统一声明
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.tvbox.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.tvbox.app"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+    }
+
+    buildTypes {
+        release {
+            // 刻意不开启混淆：所有代码保持可读、可审计。
+            // 本项目的可信度来自"代码能被完整阅读"，而不是来自隐藏实现。
+            minifyEnabled false
+            shrinkResources false
+            debuggable false
+        }
+        debug {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    // 直接复用 core 模块源码：Android 端与 JVM 端跑的是同一份解析引擎，
+    // 不存在"两套实现"，也就不存在移动端被夹带、桌面端干净的可能。
+    //
+    // 路径相对于 app/ 目录，所以是 '../core'（不是 '../../core'）。
+    sourceSets {
+        main {
+            java.srcDirs += ['../core/src/main/java']
+            // 桌面命令行工具（含 ProcessBuilder）不进 APK，用 Ant 风格通配更稳妥
+            java.excludes += ['**/com/tvbox/core/cli/**']
+        }
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    // 仅用于播放，是唯一的功能性第三方依赖
+    implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
+}

@@ -1,0 +1,161 @@
+{
+  "note": "内置示例配置：只含公开、合法、稳定的测试源。影视内容源请在 App 配置页自行填写你的接口地址。",
+  "sites": [
+    {
+      "key": "official_samples",
+      "name": "官方测试片源（稳定）",
+      "type": "static",
+      "searchable": true,
+      "ext": {
+        "remark": "Google 公开的 ExoPlayer / GTV 示例媒体，用于验证播放链路是否通畅"
+      },
+      "static": {
+        "classes": [
+          {"type_id": "mp4", "type_name": "MP4 直链"},
+          {"type_id": "hls", "type_name": "HLS 切片"}
+        ],
+        "list": [
+          {
+            "vod_id": "gtv-bunny",
+            "type_id": "mp4",
+            "vod_name": "Big Buck Bunny",
+            "vod_pic": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
+            "vod_remarks": "MP4 · 596s",
+            "vod_content": "Google 官方公开示例视频（Blender 开源动画），用于验证 MP4 直链播放。",
+            "vod_play_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          },
+          {
+            "vod_id": "gtv-elephants",
+            "type_id": "mp4",
+            "vod_name": "Elephants Dream",
+            "vod_pic": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+            "vod_remarks": "MP4 · 653s",
+            "vod_content": "Google 官方公开示例视频，用于验证 MP4 直链播放。",
+            "vod_play_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+          },
+          {
+            "vod_id": "gtv-blazes",
+            "type_id": "mp4",
+            "vod_name": "For Bigger Blazes",
+            "vod_pic": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
+            "vod_remarks": "MP4 · 15s",
+            "vod_content": "Google 官方公开示例视频，短片，加载快，适合快速验证。",
+            "vod_play_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+          },
+          {
+            "vod_id": "exo-small",
+            "type_id": "mp4",
+            "vod_name": "ExoPlayer 小分辨率测试片",
+            "vod_pic": "",
+            "vod_remarks": "320x180",
+            "vod_content": "ExoPlayer 官方测试媒体，体积小，弱网也能秒开。",
+            "vod_play_url": "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4"
+          },
+          {
+            "vod_id": "exo-hls-hevc",
+            "type_id": "hls",
+            "vod_name": "HLS 多码率测试流",
+            "vod_pic": "",
+            "vod_remarks": "HLS · m3u8",
+            "vod_content": "ExoPlayer 官方 HLS 测试流（含多码率 master playlist），用于验证 m3u8 播放与码率自适应。",
+            "vod_play_url": "https://storage.googleapis.com/exoplayer-test-media-0/Apple/advanced_streaming/hevc/master.m3u8"
+          }
+        ]
+      }
+    },
+    {
+      "key": "iptv_org_cn",
+      "name": "公开 IPTV 索引（iptv-org）",
+      "type": "decl",
+      "searchable": false,
+      "api": "https://iptv-org.github.io/iptv",
+      "ext": {
+        "remark": "iptv-org 是 GitHub 上的公开广播索引仓库，内容为各国可公开接收的频道列表；本项目只做纯文本解析，不转存、不转发。"
+      },
+      "rules": {
+        "home": {
+          "url": "${api}/countries/cn.m3u",
+          "method": "GET",
+          "parse": "m3u",
+          "limit": 120
+        },
+        "category": {
+          "url": "${api}/countries/cn.m3u",
+          "method": "GET",
+          "parse": "m3u",
+          "limit": 120
+        }
+      }
+    },
+    {
+      "key": "template_json",
+      "name": "自建接口模板（默认禁用，改成你自己的地址后启用）",
+      "type": "decl",
+      "enabled": false,
+      "searchable": true,
+      "api": "https://example.com/api",
+      "headers": {
+        "User-Agent": "SafeTVBox/1.0"
+      },
+      "rules": {
+        "home": {
+          "url": "${api}/index.php?vod/home",
+          "method": "GET",
+          "parse": "json",
+          "classes": {
+            "root": "$.class",
+            "fields": {
+              "type_id": "$.type_id",
+              "type_name": "$.type_name"
+            }
+          },
+          "list": {
+            "root": "$.list",
+            "fields": {
+              "vod_id": "$.vod_id",
+              "vod_name": "$.vod_name",
+              "vod_pic": "$.vod_pic",
+              "vod_remarks": "$.vod_remarks"
+            }
+          }
+        },
+        "category": {
+          "url": "${api}/index.php?vod/type/id/${tid}/page/${page}",
+          "method": "GET",
+          "parse": "json",
+          "root": "$.list",
+          "fields": {
+            "vod_id": "$.vod_id",
+            "vod_name": "$.vod_name",
+            "vod_pic": "$.vod_pic",
+            "vod_remarks": "$.vod_remarks"
+          }
+        },
+        "detail": {
+          "url": "${api}/index.php?vod/detail/id/${id}",
+          "method": "GET",
+          "parse": "json",
+          "root": "$.list",
+          "fields": {
+            "vod_name": "$.vod_name",
+            "vod_pic": "$.vod_pic",
+            "vod_content": "$.vod_content",
+            "vod_play_from": "$.vod_play_from",
+            "vod_play_url": "$.vod_play_url"
+          }
+        },
+        "search": {
+          "url": "${api}/index.php?vod/search/wd/${wd|urlencode}",
+          "method": "GET",
+          "parse": "json",
+          "root": "$.list",
+          "fields": {
+            "vod_id": "$.vod_id",
+            "vod_name": "$.vod_name",
+            "vod_pic": "$.vod_pic"
+          }
+        }
+      }
+    }
+  ]
+}
